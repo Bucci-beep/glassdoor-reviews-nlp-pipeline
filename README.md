@@ -46,6 +46,14 @@ Binary sentiment classification (positive: rating ≥ 4, negative: rating ≤ 2;
 
 The dataset has a natural class imbalance (~75% positive / 25% negative reviews). The default model favours precision on the minority (negative) class; `class_weight="balanced"` trades some precision for substantially better recall — a genuine precision/recall tradeoff, with the "right" choice depending on the downstream use case (e.g. flagging reviews for human review vs. automated reporting).
 
+TF-IDF vs. Word2Vec: feature representation comparison
+
+The same Logistic Regression classifier was retrained on averaged Word2Vec document vectors (100 dimensions, trained on the training split only to avoid leakage) instead of TF-IDF features (3,000 dimensions), to compare how much the choice of text representation affects performance:
+
+MetricTF-IDFWord2Vec (averaged)Accuracy0.8840.858Negative precision0.910.80Negative recall0.600.58Positive precision0.880.87Positive recall0.980.95
+
+TF-IDF outperformed Word2Vec across every metric on this task. Likely reasons: averaging word vectors into a single document vector blurs distinctive sentiment-bearing words together, and the training set (~4,500 reviews) is small for learning high-quality embeddings from scratch, compared to the billions of words modern pre-trained embedding models train on. This is a useful finding in itself — a more sophisticated representation doesn't automatically outperform a simpler one, and the right choice depends on task and data volume, not technique novelty alone.
+
 ## Tech Stack
 
 - **Python 3**
